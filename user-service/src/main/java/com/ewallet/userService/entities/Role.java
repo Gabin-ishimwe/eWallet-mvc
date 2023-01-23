@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
@@ -26,9 +26,9 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(
-            message = "Role name is required"
-    )
+//    @NotBlank(
+//            message = "Role name is required"
+//    )
     @Column(
             name = "role_name"
     )

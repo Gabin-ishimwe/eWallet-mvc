@@ -1,7 +1,5 @@
 package com.ewallet.userService.entities;
 
-package com.bankProject.tekanaeWallet.auth.entity;
-
 import lombok.*;
 
 import javax.persistence.*;
@@ -41,6 +39,7 @@ public class User {
             name = "contact_number"
     )
     private String contactNumber;
+
     @ManyToMany(
             fetch = FetchType.EAGER
     )
@@ -57,17 +56,4 @@ public class User {
     )
     private List<Role> roles;
 
-    @OneToOne
-    @JoinColumn(
-            name = "account_number",
-            referencedColumnName = "account_number"
-    )
-    private Account account;
-
-    @OneToMany
-    @JoinColumn(
-            name = "user_id",
-            referencedColumnName = "id"
-    )
-    private List<Transaction> transactions;
 }
