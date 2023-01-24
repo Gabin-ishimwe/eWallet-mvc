@@ -1,6 +1,7 @@
 package com.ewallet.userService.security;
 
-import com.bankProject.tekanaeWallet.utils.JwtUserDetailService;
+
+import com.ewallet.userService.utils.JwtUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -55,7 +56,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
-
     }
 
     @Bean

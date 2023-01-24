@@ -1,6 +1,6 @@
 package com.ewallet.userService.dto;
 
-import com.bankProject.tekanaeWallet.validation.passwordValidation.Password;
+import com.ewallet.userService.validation.passwordValidation.Password;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
