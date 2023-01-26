@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
 
 spring:
   jpa:
@@ -16,7 +16,7 @@ spring:
       matching-strategy: ant_path_matcher
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/userservice
+    url: jdbc:postgresql://localhost:5432/transactionservice
     username: postgres
     password: andela
 
