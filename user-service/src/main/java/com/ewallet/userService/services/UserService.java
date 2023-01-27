@@ -1,5 +1,6 @@
 package com.ewallet.userService.services;
 
+import com.ewallet.userService.dto.AccountResponseDto;
 import com.ewallet.userService.dto.AuthResponseDto;
 import com.ewallet.userService.dto.LoginDto;
 import com.ewallet.userService.dto.RegisterDto;
@@ -20,10 +21,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -46,8 +47,8 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-//    @Autowired
-//    private AccountRepository accountRepository;
+    @Autowired
+    private WebClient.Builder webClient;
 
     @Transactional
     public AuthResponseDto userRegister(RegisterDto registerDto) throws UserExistsException, NotFoundException {
@@ -62,15 +63,6 @@ public class UserService {
         }
         roles.add(userRole);
 
-        // call account service with web client to register account
-
-        // create user account
-//        Account accountUser = Account.builder()
-//                .account_number(UUID.randomUUID())
-//                .balance(0L)
-//                .build();
-//
-//        Account savedAccount = accountRepository.save(accountUser);
         // create user instance
         User user = User.builder()
                 .firstName(registerDto.getFirstName())
@@ -84,6 +76,14 @@ public class UserService {
 
         // save user
         userRepository.save(user);
+
+        // call account service with web client to register account
+        AccountResponseDto accountResponseDto = webClient.build().post().uri("http://localhost:8082/api/v1/account")
+                .retrieve()
+                .bodyToMono(AccountResponseDto.class)
+                .block();
+
+        System.out.println(accountResponseDto);
         return AuthResponseDto
                 .builder()
                 .message("User Registered Successfully")

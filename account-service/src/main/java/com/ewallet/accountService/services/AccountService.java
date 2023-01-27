@@ -2,13 +2,15 @@ package com.ewallet.accountService.services;
 
 import com.ewallet.accountService.dto.AccountRequestDto;
 import com.ewallet.accountService.dto.AccountResponseDto;
+import com.ewallet.accountService.dto.TransactionResponseDto;
 import com.ewallet.accountService.dto.TransferRequestDto;
 import com.ewallet.accountService.entity.Account;
+import com.ewallet.accountService.exceptions.NotFoundException;
 import com.ewallet.accountService.repositories.AccountRepository;
-import com.ewallet.userService.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.UUID;
 
@@ -18,11 +20,8 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-//    @Autowired
-//    private TransactionRepository transactionRepository;
-
-//    @Autowired
-//    private UserRepository userRepository;
+    @Autowired
+    private WebClient.Builder webClient;
 
     public AccountResponseDto createAccount() {
         Account account = Account.builder()
@@ -37,23 +36,17 @@ public class AccountService {
     @Transactional
     public AccountResponseDto depositMoney(AccountRequestDto accountRequestDto) throws NotFoundException {
         Account findAccount = accountRepository.findById(accountRequestDto.getAccountNumber()).orElseThrow(() -> new NotFoundException("Account number not found"));
-//        UserDetails authUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        User findUser = userRepository.findByEmail(authUser.getUsername());
-//        if(findUser == null) {
-//            throw new NotFoundException("User not found");
-//        }
         Long newBalance = findAccount.getBalance() + accountRequestDto.getMoney();
         findAccount.setBalance(newBalance);
         Account depositAccount = accountRepository.save(findAccount);
 
-//        Transaction deposit = new Transaction();
-//        deposit.setToAccountNumber(findAccount.getAccount_number());
-//        deposit.setAmount(accountRequestDto.getMoney());
-//        deposit.setTypeTransaction(TypeTransaction.DEPOSIT);
-//
-//        Transaction depositTransaction = transactionRepository.save(deposit);
-//        findUser.getTransactions().add(depositTransaction);
-//        userRepository.save(findUser);
+        // call transaction service
+        TransactionResponseDto transactionResponseDto = webClient.build().post()
+                .uri("http://localhost:8083/api/v1/transaction")
+                .retrieve()
+                .bodyToMono(TransactionResponseDto.class)
+                .block();
+
 
         return new AccountResponseDto(
                 "Amount deposited Successful",

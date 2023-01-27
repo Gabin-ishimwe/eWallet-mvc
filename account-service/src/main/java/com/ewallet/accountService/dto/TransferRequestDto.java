@@ -1,6 +1,6 @@
 package com.ewallet.accountService.dto;
 
-import com.ewallet.userService.validation.uuidValidation.Uuid;
+import com.ewallet.accountService.validation.uuidValidation.Uuid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

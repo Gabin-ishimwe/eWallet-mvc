@@ -3,13 +3,16 @@ package com.ewallet.accountService.controllers;
 import com.ewallet.accountService.dto.AccountRequestDto;
 import com.ewallet.accountService.dto.AccountResponseDto;
 import com.ewallet.accountService.dto.TransferRequestDto;
+import com.ewallet.accountService.exceptions.NotFoundException;
 import com.ewallet.accountService.services.AccountService;
-import com.ewallet.userService.exceptions.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -31,7 +34,7 @@ public class AccountController {
 //    public AccountResponseDto balanceMoney() throws NotFoundException {
 //        return accountService.balanceAccount();
 //    }
-    @PostMapping("/create")
+    @PostMapping
     public AccountResponseDto createAccount() {
         System.out.println("Account created-----");
         return accountService.createAccount();
@@ -65,10 +68,5 @@ public class AccountController {
     )
     public AccountResponseDto transferMoney(@RequestBody @Valid TransferRequestDto transferRequestDto) throws NotFoundException {
         return accountService.transferMoney(transferRequestDto);
-    }
-
-    @GetMapping("/account")
-    public String getAccount() {
-        return "User account";
     }
 }

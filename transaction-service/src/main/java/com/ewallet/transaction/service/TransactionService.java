@@ -15,9 +15,6 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-//    @Autowired
-//    private UserRepository userRepository;
-
     public TransactionResponseDto commitTransaction(TransactionRequestDto transactionRequestDto) {
         Transaction transaction = Transaction.builder()
                 .typeTransaction(transactionRequestDto.getTypeTransaction())
