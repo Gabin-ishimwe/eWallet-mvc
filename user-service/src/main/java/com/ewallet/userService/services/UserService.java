@@ -78,7 +78,7 @@ public class UserService {
         userRepository.save(user);
 
         // call account service with web client to register account
-        AccountResponseDto accountResponseDto = webClient.build().post().uri("http://localhost:8082/api/v1/account")
+        AccountResponseDto accountResponseDto = webClient.build().post().uri("http://account-service/api/v1/account")
                 .retrieve()
                 .bodyToMono(AccountResponseDto.class)
                 .block();
