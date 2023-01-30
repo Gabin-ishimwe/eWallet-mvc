@@ -1,9 +1,6 @@
 package com.ewallet.accountService.services;
 
-import com.ewallet.accountService.dto.AccountRequestDto;
-import com.ewallet.accountService.dto.AccountResponseDto;
-import com.ewallet.accountService.dto.TransactionResponseDto;
-import com.ewallet.accountService.dto.TransferRequestDto;
+import com.ewallet.accountService.dto.*;
 import com.ewallet.accountService.entity.Account;
 import com.ewallet.accountService.exceptions.NotFoundException;
 import com.ewallet.accountService.repositories.AccountRepository;
@@ -40,9 +37,16 @@ public class AccountService {
         findAccount.setBalance(newBalance);
         Account depositAccount = accountRepository.save(findAccount);
 
+        TransactionRequestDto depositTransaction = TransactionRequestDto.builder()
+                .toAccount(findAccount.getAccount_number())
+                .typeTransaction(TypeTransaction.DEPOSIT)
+                .amount(accountRequestDto.getMoney())
+                .build(); ;
+
         // call transaction service
         TransactionResponseDto transactionResponseDto = webClient.build().post()
                 .uri("http://localhost:8083/api/v1/transaction")
+                .bodyValue(depositTransaction)
                 .retrieve()
                 .bodyToMono(TransactionResponseDto.class)
                 .block();
@@ -57,11 +61,6 @@ public class AccountService {
     @Transactional
     public AccountResponseDto withdrawMoney(AccountRequestDto accountRequestDto) throws NotFoundException {
         Account findAccount = accountRepository.findById(accountRequestDto.getAccountNumber()).orElseThrow(() -> new NotFoundException("Account number not found"));
-//        UserDetails authUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        User findUser = userRepository.findByEmail(authUser.getUsername());
-//        if(findUser == null) {
-//            throw new NotFoundException("User not found");
-//        }
         long remainingBalance = findAccount.getBalance() - accountRequestDto.getMoney();
         if(remainingBalance < 0) {
             throw new IllegalArgumentException("You don't have enough sufficient funds");
@@ -69,14 +68,20 @@ public class AccountService {
         findAccount.setBalance(remainingBalance);
         Account withrawAccount = accountRepository.save(findAccount);
 
-//        Transaction withdraw = new Transaction();
-//        withdraw.setFromAccountNumber(findAccount.getAccount_number());
-//        withdraw.setAmount(accountRequestDto.getMoney());
-//        withdraw.setTypeTransaction(TypeTransaction.WITHDRAW);
-//
-//        Transaction withdrawTransaction = transactionRepository.save(withdraw);
-//        findUser.getTransactions().add(withdrawTransaction);
-//        userRepository.save(findUser);
+        TransactionRequestDto withdrawTransaction = TransactionRequestDto.builder()
+                .toAccount(findAccount.getAccount_number())
+                .typeTransaction(TypeTransaction.WITHDRAW)
+                .amount(accountRequestDto.getMoney())
+                .build(); ;
+
+        // call transaction service
+        TransactionResponseDto transactionResponseDto = webClient.build().post()
+                .uri("http://localhost:8083/api/v1/transaction")
+                .bodyValue(withdrawTransaction)
+                .retrieve()
+                .bodyToMono(TransactionResponseDto.class)
+                .block();
+
 
         return new AccountResponseDto(
                 "Amount withdrawn Successful",
@@ -88,13 +93,7 @@ public class AccountService {
     public AccountResponseDto transferMoney(TransferRequestDto transferRequestDto) throws NotFoundException {
         Account senderAccount = accountRepository.findById(transferRequestDto.getSenderAccount()).orElseThrow(()-> new NotFoundException("Sender account not found"));
         Account receiveAccount = accountRepository.findById(transferRequestDto.getReceiverAccount()).orElseThrow(() -> new NotFoundException("Receiver account not found"));
-//        UserDetails authUser = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        User findUser = userRepository.findByEmail(authUser.getUsername());
-//        if(findUser == null) {
-//            throw new NotFoundException("User not found");
-//        }
-        // sender's account
-        // removing the amount
+
         long newBalance = senderAccount.getBalance() - transferRequestDto.getAmount();
         if(newBalance < 0) {
             throw new IllegalArgumentException("You don't have enough sufficient funds");
@@ -108,15 +107,20 @@ public class AccountService {
         accountRepository.save(receiveAccount);
 
         // registering transaction
-//        Transaction transfer = new Transaction();
-//        transfer.setTypeTransaction(TypeTransaction.TRANSFER);
-//        transfer.setAmount(transferRequestDto.getAmount());
-//        transfer.setFromAccountNumber(senderAccount.getAccount_number());
-//        transfer.setToAccountNumber(receiveAccount.getAccount_number());
-//
-//        Transaction transferTransaction = transactionRepository.save(transfer);
-//        findUser.getTransactions().add(transferTransaction);
-//        userRepository.save(findUser);
+        TransactionRequestDto withdrawTransaction = TransactionRequestDto.builder()
+                .toAccount(receiveAccount.getAccount_number())
+                .fromAccount(senderAccount.getAccount_number())
+                .typeTransaction(TypeTransaction.TRANSFER)
+                .amount(transferRequestDto.getAmount())
+                .build(); ;
+
+        // call transaction service
+        TransactionResponseDto transactionResponseDto = webClient.build().post()
+                .uri("http://localhost:8083/api/v1/transaction")
+                .bodyValue(withdrawTransaction)
+                .retrieve()
+                .bodyToMono(TransactionResponseDto.class)
+                .block();
         return new AccountResponseDto("Amount Transferred Successfully ",  transferAccount);
     }
 

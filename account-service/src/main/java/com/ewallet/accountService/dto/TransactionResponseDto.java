@@ -1,6 +1,5 @@
 package com.ewallet.accountService.dto;
 
-import com.ewallet.transaction.entity.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
