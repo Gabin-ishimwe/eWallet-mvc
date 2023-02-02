@@ -2,10 +2,12 @@ server:
   port: 0
 
 spring:
+
   application:
     name: api-gateway
   main:
     web-application-type: reactive
+    allow-bean-definition-overriding: true
   cloud:
     gateway:
       routes:
@@ -58,3 +60,7 @@ logging:
     #            nodeValue: TRACE
     ## ROOT LOGGER OF THE WHOLE APPLICATION
     root: INFO
+
+app:
+  jwt:
+    secret: secureApiGateway

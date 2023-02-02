@@ -3,14 +3,15 @@ package com.ewallet.userService.controllers;
 import com.ewallet.userService.dto.AuthResponseDto;
 import com.ewallet.userService.dto.LoginDto;
 import com.ewallet.userService.dto.RegisterDto;
+import com.ewallet.userService.entities.User;
 import com.ewallet.userService.exceptions.NotFoundException;
 import com.ewallet.userService.exceptions.UserAuthException;
 import com.ewallet.userService.exceptions.UserExistsException;
+import com.ewallet.userService.repositories.UserRepository;
 import com.ewallet.userService.services.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,6 +23,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping(path = "/register")
     @ApiOperation(
@@ -60,5 +64,10 @@ public class UserController {
     )
     public AuthResponseDto getOneUser() throws NotFoundException {
         return userService.getOneUser();
+    }
+
+    @GetMapping("/user")
+    public User getUserByEmail(@RequestParam String email) {
+        return userRepository.findByEmail(email);
     }
 }
