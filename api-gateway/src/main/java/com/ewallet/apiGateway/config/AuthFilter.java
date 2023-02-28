@@ -13,8 +13,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config>{
 
 //    @Autowired
 //    WebClient.Builder webClient;
-
-    AuthFilter() {
+    AuthFilter(){
         super(Config.class);
     }
 
@@ -26,6 +25,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config>{
             }
             // get token from header
             String authToken = Objects.requireNonNull(exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0);
+
             // split token
             String[] parts = authToken.split(" ");
             // check if token is valid
@@ -40,5 +40,5 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config>{
     }
 
 
-//    public static class Config {}
+    public static class Config {}
 }
