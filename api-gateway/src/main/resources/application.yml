@@ -22,12 +22,16 @@ spring:
           uri: lb://account-service # used lb to allow client side to do some load balancing
           predicates:
             - Path= /api/v1/account, /api/v1/account/deposit, /api/v1/account/withdraw
+          filters:
+            - AuthFilter
 
         ## Transaction Service Route
         - id: transaction-service
           uri: lb://transaction-service # used lb to allow client side to do some load balancing
           predicates:
             - Path= /api/v1/transaction
+          filters:
+            - AuthFilter
 
         ## Discovery Service Route
         - id: discovery-service

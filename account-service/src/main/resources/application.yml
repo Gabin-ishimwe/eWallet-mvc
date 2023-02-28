@@ -36,3 +36,15 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://localhost:8761/eureka"
+
+# Microservice health actuator
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: *
+    health:
+      show-details: always
