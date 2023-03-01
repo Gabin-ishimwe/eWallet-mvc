@@ -39,12 +39,27 @@ eureka:
 
 # Microservice health actuator
 management:
-  health:
-    circuitbreakers:
-      enabled: true
   endpoints:
     web:
       exposure:
-        include: *
+        include: '*'
+  health:
+    circuitbreakers:
+      enabled: 'true'
+  endpoint:
     health:
       show-details: always
+
+# Resilience4j Properties
+resilience4j:
+  circuitbreaker:
+    instances:
+      accountService:
+        automaticTransitionFromOpenToHalfOpenEnabled: 'true'
+        failureRateThreshold: '50'
+        slidingWindowType: COUNT_BASED
+        event-consumer-buffer-size: '10'
+        registerHealthIndicator: 'true'
+        waitDurationInOpenState: '5s'
+        permittedNumberOfCallsInHalfOpenState: '3'
+        slidingWindowSize: '5'

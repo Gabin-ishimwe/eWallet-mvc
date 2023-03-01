@@ -5,16 +5,17 @@ import com.ewallet.accountService.dto.AccountResponseDto;
 import com.ewallet.accountService.dto.TransferRequestDto;
 import com.ewallet.accountService.exceptions.NotFoundException;
 import com.ewallet.accountService.services.AccountService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -35,23 +36,31 @@ public class AccountController {
 //        return accountService.balanceAccount();
 //    }
     @PostMapping
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackCreateMethod")
     public AccountResponseDto createAccount() {
         System.out.println("Account created-----");
         return accountService.createAccount();
     }
 
+    public ResponseEntity<?> fallbackCreateMethod(RuntimeException e) throws Exception {
+        throw new Exception("Create account service malfunctioning, Try again later !!!");
+    }
+
     @PostMapping("/deposit")
-//    @PreAuthorize("hasRole('USER')")
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackDepositMethod")
     @ApiOperation(
             value = "User deposit money",
             notes = "API for user to deposit money on their account"
     )
-    public AccountResponseDto depositMoney(@RequestBody @Valid AccountRequestDto accountRequestDto, HttpServletRequest request) throws NotFoundException {
+    public AccountResponseDto depositMoney(@RequestBody @Valid AccountRequestDto accountRequestDto) throws NotFoundException {
         return accountService.depositMoney(accountRequestDto);
     }
 
+    public ResponseEntity<?> fallbackDepositMethod(RuntimeException e) throws Exception {
+        throw new Exception("Deposit service malfunctioning, Try again later !!!");
+    }
+
     @PostMapping("/withdraw")
-//    @PreAuthorize("hasRole('USER')")
     @ApiOperation(
             value = "User withdraw money",
             notes = "API for user to withdraw money on their account"
@@ -61,7 +70,6 @@ public class AccountController {
     }
 
     @PostMapping("/transfer")
-//    @PreAuthorize("hasRole('USER')")
     @ApiOperation(
             value = "User transfer money",
             notes = "API for user to transfer money on other account"
