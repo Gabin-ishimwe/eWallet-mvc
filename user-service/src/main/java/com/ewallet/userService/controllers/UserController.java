@@ -9,6 +9,7 @@ import com.ewallet.userService.exceptions.UserAuthException;
 import com.ewallet.userService.exceptions.UserExistsException;
 import com.ewallet.userService.repositories.UserRepository;
 import com.ewallet.userService.services.UserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,13 @@ public class UserController {
             notes = "User registration in our application",
             response = AuthResponseDto.class
     )
+    @CircuitBreaker(name = "userService", fallbackMethod = "fallBackRegisterMethod")
     public AuthResponseDto authRegister(@RequestBody @Valid RegisterDto registerDto) throws UserExistsException, NotFoundException {
         return userService.userRegister(registerDto);
+    }
+
+    public AuthResponseDto fallBackRegisterMethod(Exception e) {
+        return new AuthResponseDto("Register service failing", null, null, null);
     }
 
     @PostMapping(path = "/login")

@@ -9,12 +9,8 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -42,8 +38,10 @@ public class AccountController {
         return accountService.createAccount();
     }
 
-    public ResponseEntity<?> fallbackCreateMethod(RuntimeException e) throws Exception {
-        throw new Exception("Create account service malfunctioning, Try again later !!!");
+    public AccountResponseDto fallbackCreateMethod(RuntimeException e) throws Exception {
+//      throw new Exception("Create account service malfunctioning, Try again later !!!");
+        return new AccountResponseDto("Create account service malfunctioning, Try again later !!!", null);
+        //return new ResponseEntity<>(new ErrorDetails("Message", null, null, null), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/deposit")
@@ -56,8 +54,10 @@ public class AccountController {
         return accountService.depositMoney(accountRequestDto);
     }
 
-    public ResponseEntity<?> fallbackDepositMethod(RuntimeException e) throws Exception {
-        throw new Exception("Deposit service malfunctioning, Try again later !!!");
+    public AccountResponseDto fallbackDepositMethod(RuntimeException e) throws Exception {
+        //throw new Exception("c");
+        return new AccountResponseDto("Deposit service malfunctioning, Try again later !!!", null);
+
     }
 
     @PostMapping("/withdraw")
@@ -76,5 +76,10 @@ public class AccountController {
     )
     public AccountResponseDto transferMoney(@RequestBody @Valid TransferRequestDto transferRequestDto) throws NotFoundException {
         return accountService.transferMoney(transferRequestDto);
+    }
+
+    @GetMapping
+    public String getAccounts(){
+        return "all accounts";
     }
 }
