@@ -10,6 +10,7 @@ import com.ewallet.userService.exceptions.UserExistsException;
 import com.ewallet.userService.repositories.UserRepository;
 import com.ewallet.userService.services.UserService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,9 @@ public class UserController {
             response = AuthResponseDto.class
     )
     @CircuitBreaker(name = "userService", fallbackMethod = "fallBackRegisterMethod")
+    @Retry(name = "userService")
     public AuthResponseDto authRegister(@RequestBody @Valid RegisterDto registerDto) throws UserExistsException, NotFoundException {
+        System.out.println("Testing retry mechanism");
         return userService.userRegister(registerDto);
     }
 
