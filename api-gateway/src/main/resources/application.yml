@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 9999
 
 spring:
 
@@ -16,6 +16,12 @@ spring:
           uri: lb://user-service # used lb to allow client side to do some load balancing
           predicates:
             - Path= /api/v1/auth/register, /api/v1/auth/login
+
+#        ## actuactor
+#        - id: actuator
+#          uri: http://localhost:9999
+#          predicates:
+#            - Path= /actuator
 
         ## Account Service Route
         - id: account-service
@@ -64,6 +70,19 @@ logging:
     #            nodeValue: TRACE
     ## ROOT LOGGER OF THE WHOLE APPLICATION
     root: INFO
+
+# Microservice health actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    circuitbreakers:
+      enabled: 'true'
+  endpoint:
+    health:
+      show-details: always
 
 app:
   jwt:

@@ -43,17 +43,17 @@ public class ApplicationException {
         ), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGlobalException(Exception exception) {
-        LocalDateTime errorTime = LocalDateTime.now();
-        return new ResponseEntity<>(new ErrorDetails(
-                exception.getMessage(),
-                null,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                errorTime
-        ), HttpStatus.INTERNAL_SERVER_ERROR
-        );
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<?> handleGlobalException(Exception exception) {
+//        LocalDateTime errorTime = LocalDateTime.now();
+//        return new ResponseEntity<>(new ErrorDetails(
+//                exception.getMessage(),
+//                null,
+//                HttpStatus.INTERNAL_SERVER_ERROR,
+//                errorTime
+//        ), HttpStatus.INTERNAL_SERVER_ERROR
+//        );
+//    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleNotFoundException(NotFoundException notFoundException) {
