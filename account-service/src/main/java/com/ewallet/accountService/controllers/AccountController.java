@@ -34,7 +34,6 @@ public class AccountController {
     @PostMapping
     @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackCreateMethod")
     public AccountResponseDto createAccount() {
-        System.out.println("Account created-----");
         return accountService.createAccount();
     }
 

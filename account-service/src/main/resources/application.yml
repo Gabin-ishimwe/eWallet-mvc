@@ -29,6 +29,13 @@ spring:
     sample:
       probability: 1.0
 
+  # kafka properties
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 app:
   jwt:
     secret: tekanaeWalletJwtSecretKey
@@ -70,3 +77,4 @@ resilience4j:
         waitDurationInOpenState: '5s'
         permittedNumberOfCallsInHalfOpenState: '3'
         slidingWindowSize: '5'
+
