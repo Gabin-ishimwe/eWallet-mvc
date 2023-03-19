@@ -4,6 +4,7 @@ import com.ewallet.accountService.dto.*;
 import com.ewallet.accountService.entity.Account;
 import com.ewallet.accountService.event.TransactionEvent;
 import com.ewallet.accountService.exceptions.NotFoundException;
+import com.ewallet.accountService.kafka.AccountEvent;
 import com.ewallet.accountService.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -21,6 +22,9 @@ public class AccountService {
 
     @Autowired
     private WebClient.Builder webClient;
+
+    @Autowired
+    private AccountEvent accountEvent;
 
     @Autowired
     private KafkaTemplate<String, TransactionEvent> kafkaTemplate;
@@ -47,17 +51,18 @@ public class AccountService {
                 .typeTransaction(TypeTransaction.DEPOSIT)
                 .amount(accountRequestDto.getMoney())
                 .build(); ;
-
+        System.out.println("before===============================");
         // call transaction service
         TransactionResponseDto transactionResponseDto = webClient.build().post()
-                .uri("http://transaction-service/api/v1/transaction")
+                .uri("http://localhost:8083/api/v1/transaction")
                 .bodyValue(depositTransaction)
                 .retrieve()
                 .bodyToMono(TransactionResponseDto.class)
                 .block();
+        System.out.println("after=================================");
         // notification
-        kafkaTemplate.send("transactionNotification", new TransactionEvent("deposit transaction", depositTransaction));
-
+        // kafkaTemplate.send("transactionNotification", new TransactionEvent("deposit transaction", depositTransaction));
+        accountEvent.sendMessage(new TransactionEvent("deposit transaction", depositTransaction));
 
 
         return new AccountResponseDto(
@@ -91,7 +96,8 @@ public class AccountService {
                 .block();
 
         // notification
-        kafkaTemplate.send("transactionNotification", new TransactionEvent("deposit transaction", withdrawTransaction));
+        // kafkaTemplate.send("transactionNotification", new TransactionEvent("deposit transaction", withdrawTransaction));
+        accountEvent.sendMessage(new TransactionEvent("withdraw transaction", withdrawTransaction));
 
         return new AccountResponseDto(
                 "Amount withdrawn Successful",
@@ -132,7 +138,8 @@ public class AccountService {
                 .bodyToMono(TransactionResponseDto.class)
                 .block();
         // notification
-        kafkaTemplate.send("transactionNotification", new TransactionEvent("deposit transaction", withdrawTransaction));
+        // kafkaTemplate.send("transactionNotification", new TransactionEvent("deposit transaction", withdrawTransaction));
+        accountEvent.sendMessage(new TransactionEvent("transaction transaction", withdrawTransaction));
 
         return new AccountResponseDto("Amount Transferred Successfully ",  transferAccount);
     }
