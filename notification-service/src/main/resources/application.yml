@@ -1,0 +1,29 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: notification-service
+
+  # distributed tracing with zipkin
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sample:
+      probability: 1.0
+
+  # kafka properties
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      group-id: account
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeSerializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeSerializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+    # kafka topic events
+    topic:
+      name: account-event
