@@ -34,7 +34,6 @@ public class AccountController {
     @PostMapping
     @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackCreateMethod")
     public AccountResponseDto createAccount() {
-        System.out.println("Account created-----");
         return accountService.createAccount();
     }
 
@@ -45,7 +44,7 @@ public class AccountController {
     }
 
     @PostMapping("/deposit")
-    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackDepositMethod")
+//    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackDepositMethod")
     @ApiOperation(
             value = "User deposit money",
             notes = "API for user to deposit money on their account"
@@ -54,11 +53,11 @@ public class AccountController {
         return accountService.depositMoney(accountRequestDto);
     }
 
-    public AccountResponseDto fallbackDepositMethod(RuntimeException e) throws Exception {
-        //throw new Exception("c");
-        return new AccountResponseDto("Deposit service malfunctioning, Try again later !!!", null);
-
-    }
+//    public AccountResponseDto fallbackDepositMethod(RuntimeException e) throws Exception {
+//        //throw new Exception("c");
+//        return new AccountResponseDto("Deposit service malfunctioning, Try again later !!!", null);
+//
+//    }
 
     @PostMapping("/withdraw")
     @ApiOperation(
