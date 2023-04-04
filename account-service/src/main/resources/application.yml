@@ -35,7 +35,11 @@ spring:
     producer:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-
+      properties:
+        spring:
+          json:
+            type:
+              mapping: event:com.ewallet.accountService.event
     # kafka topic events
     topic:
       name: account-event
@@ -54,6 +58,10 @@ eureka:
   client:
     serviceUrl:
       defaultZone: "http://localhost:8761/eureka"
+
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
 
 # Microservice health actuator
 management:
