@@ -21,9 +21,8 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       properties:
         spring:
+          #"[json.type.mapping]": event:com.ewallet.notification.event.TransactionEvent
           json:
-            type:
-              mapping: event:com.ewallet.notification.event
             trusted:
               packages: '*'
     # kafka topic events

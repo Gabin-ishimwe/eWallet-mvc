@@ -39,7 +39,7 @@ spring:
         spring:
           json:
             type:
-              mapping: event:com.ewallet.accountService.event
+              mapping: event:com.ewallet.accountService.event.TransactionEvent
     # kafka topic events
     topic:
       name: account-event
